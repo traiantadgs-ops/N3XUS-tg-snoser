@@ -22,7 +22,6 @@ def generate_random_email():
     email_name = ''.join( random.choice( letters ) for _ in range (name_length ) )
     return f"{ email_name }@{random.choice( domains ) }"
 
-# ПОЛНЫЙ СБОРНИК КАТЕГОРИЙ И ТЕКСТОВ ЖАЛОБ
 complaint_types = {
     "Спам": [
         "Пользователь {user} ID: {user_id} использует чат для рассылки рекламы и спама, что нарушает правила сообщества. Прошу удалить его сессию и заблокировать возможность отправки нежелательных сообщений.",
@@ -180,13 +179,11 @@ def single_scanner_worker():
                     proxy = check_single_proxy(ip)
                     if proxy:
                         proxy_str = proxy['http'].replace("http://", "")
-                        
-                        # Сохраняем в файл рабочих прокси
+                    
                         with file_lock:
                             with open("working_proxies.txt", "a", encoding="utf-8") as f:
                                 f.write(proxy_str + "\n")
 
-                        # Добавляем в активный пул (всегда держим до 10 штук)
                         with proxy_lock:
                             if proxy not in active_proxies and len(active_proxies) < 10:
                                 active_proxies.append(proxy)
@@ -236,7 +233,6 @@ def worker_task(user_id, user, id_link, chosen_type, sites_pool):
         print(f"{Fore.GREEN}[+] Отправлено через {proxy_str}{Style.RESET_ALL}")
         return True
     except Exception:
-        # Мертвый прокси сразу вырезается из пула, а 10 сканеров тут же найдут замену
         with proxy_lock:
             if proxy in active_proxies:
                 active_proxies.remove(proxy)
@@ -253,12 +249,10 @@ def main():
 
     print(Fore.CYAN + "\n[i] Запускаем 10 потоков-сканеров для быстрого сбора живых прокси..." + Style.RESET_ALL)
 
-    # Запускаем РОВНО 10 СКАНЕРОВ в фоновом режиме
     for _ in range(10):
         t = threading.Thread(target=single_scanner_worker, daemon=True)
         t.start()
 
-    # Ждем пока наберется первая десятка для старта
     while len(active_proxies) < 10:
         print(f"   {Fore.YELLOW}[!] Накопление прокси: {len(active_proxies)}/10{Style.RESET_ALL}", end="\r")
         time.sleep(0.5)
