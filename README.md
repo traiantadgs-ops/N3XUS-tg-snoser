@@ -19,5 +19,5 @@
 Вы можете клонировать репозиторий и запустить софт одной командой в терминале (например, через Termux или Linux):
 
 ```bash
-git clone https://github.com/traiantadgs-ops/N3XUS-th-snoser- && cd N3XUS-tg-snoser && pip install requests colorama
+git clone https://github.com/traiantadgs-ops/N3XUS-tg-snoser && cd N3XUS-tg-snoser && pip install requests colorama
  && python NTS.py
